@@ -4,28 +4,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     EditText name, email, mobile;
-    Button add_btn,view_btn,alldata_btn;
+    Button add_btn, view_btn, alldata_btn, update_btn,delete_btn;
 
-    ListView listView;
-    ArrayList<String> stringArrayList;
-    ListAdapter adapter;
+
     MyDBHelper myDBHelper;
 
     @Override
@@ -37,17 +28,13 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.name_id);
         email = findViewById(R.id.email_id);
         mobile = findViewById(R.id.mobile_id);
-        listView = findViewById(R.id.listview_id);
-        view_btn=findViewById(R.id.viwe_btn_id);
+        update_btn = findViewById(R.id.update_btn_id);
+        view_btn = findViewById(R.id.viwe_btn_id);
         alldata_btn = findViewById(R.id.alldata_btn_id);
-        stringArrayList = new ArrayList<>();
+        delete_btn=findViewById(R.id.delete_btn_id);
         myDBHelper = new MyDBHelper(this);
-        viewdata();
-        listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            String t = listView.getItemAtPosition(i).toString();
 
-            Toast.makeText(MainActivity.this, t, Toast.LENGTH_SHORT).show();
-        });
+
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
                         name.setText(" ");
                         email.setText(" ");
                         mobile.setText(" ");
-                        stringArrayList.clear();
-                        viewdata();
 
                     } else {
                         Toast.makeText(MainActivity.this, "contact not save", Toast.LENGTH_SHORT).show();
@@ -82,24 +67,55 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Cursor se = myDBHelper.showdata();
-                if (se.getCount()==0)
-                {
+                if (se.getCount() == 0) {
                     Toast.makeText(MainActivity.this, "No enty fond", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 StringBuffer stringBuffer = new StringBuffer();
-                while (se.moveToNext())
-                {
-                     stringBuffer.append("Name:"+se.getString(0)+"\n");
-                     stringBuffer.append("Email:"+se.getString(1)+"\n");
-                     stringBuffer.append("mobile:"+se.getString(2)+"\n");
+                while (se.moveToNext()) {
+                    stringBuffer.append("Name:" + se.getString(0) + "\n");
+                    stringBuffer.append("Email:" + se.getString(1) + "\n");
+                    stringBuffer.append("mobile:" + se.getString(2) + "\n");
                 }
-                AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setCancelable(true);
                 builder.setTitle("user Enteries");
                 builder.setMessage(stringBuffer.toString());
                 builder.show();
 
+            }
+        });
+
+        update_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String Name = name.getText().toString();
+                String Email = email.getText().toString();
+                String Mobile = mobile.getText().toString();
+                boolean checkupdatedata = myDBHelper.updatecontact(Name, Email, Mobile);
+                if (checkupdatedata == true) {
+                    Toast.makeText(MainActivity.this, "Entry update", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Entry not Update", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+        delete_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String Name = name.getText().toString();
+                boolean delete= myDBHelper.deletcontact(Name);
+                if (delete==true)
+                {
+                    Toast.makeText(MainActivity.this, "Delete successful", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "Delete fail ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -111,21 +127,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    private void viewdata() {
-        Cursor cursor = myDBHelper.showdata();
-        if (cursor.getCount() == 0) {
-            Toast.makeText(this, "no datashow", Toast.LENGTH_SHORT).show();
-        } else {
-            while (cursor.moveToNext()) {
-                stringArrayList.add(cursor.getString(1));
-                stringArrayList.add(cursor.getString(2));
-                stringArrayList.add(cursor.getString(3));
-            }
-            ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,stringArrayList);
-            listView.setAdapter(adapter);
-        }
     }
 
 

@@ -3,7 +3,6 @@ package com.example.task1;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -48,16 +47,63 @@ public class MyDBHelper extends SQLiteOpenHelper {
         else return false;
 
     }
-    public  Cursor showdata()
+
+    public boolean updatecontact(String name, String email, String mobile) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("Name", name);
+        values.put("Email", email);
+        values.put("Mobile", mobile);
+        Cursor cursor = db.rawQuery("select * from user_contect where name=?", new String[]{name});
+        if (cursor.getCount() > 0) {
+            long u = db.update("user_contect", values, "name=?", new String[]{name});
+            if (u == -1) {
+                    return  false;
+            }
+            else
+            {
+                return true;
+            }
+
+        } else {
+            return true;
+
+        }
+    }
+
+    public boolean deletcontact(String name)
     {
         SQLiteDatabase db= getWritableDatabase();
-        String query="Select * From user_contect";
-        Cursor cursor = db.rawQuery(query,null);
-        return cursor;
+        Cursor cursor =db.rawQuery("select * from user_contect where name=? ",new String[]{name});
+        if (cursor.getCount()>0)
+        {
+            long d=db.delete("user_contect","name=?",new String[]{name});
+            if (d==-1)
+            {
+                return false;
+
+            }
+            else
+            {
+                return true;
+            }
+
         }
-
-
+        else
+        {
+            return false;
+        }
     }
+
+    public Cursor showdata() {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "Select * From user_contect";
+        Cursor cursor = db.rawQuery(query, null);
+        return cursor;
+    }
+
+
+}
 
 
 

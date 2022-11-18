@@ -63,6 +63,23 @@
         android:layout_marginHorizontal="50dp"
         android:text="view"
         />
+
+    <Button
+        android:id="@+id/update_btn_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:text="update"
+        />
+
+    <Button
+        android:id="@+id/delete_btn_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:text="delete"
+        />
+
     <Button
         android:id="@+id/alldata_btn_id"
         android:layout_width="match_parent"
@@ -72,11 +89,7 @@
         />
 
 
-    <ListView
-        android:id="@+id/listview_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+
 
 
 </LinearLayout>
